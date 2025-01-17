@@ -1,16 +1,17 @@
 package server
 
 import (
-	"log"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"time"
 )
 
 type Server struct {
 	server *http.Server
+	log    *logrus.Logger
 }
 
-func New(port string, handler http.Handler) *Server {
+func New(port string, handler http.Handler, log *logrus.Logger) *Server {
 	return &Server{
 		server: &http.Server{
 			Addr:           ":" + port,
@@ -19,10 +20,11 @@ func New(port string, handler http.Handler) *Server {
 			ReadTimeout:    10 * time.Second,
 			WriteTimeout:   10 * time.Second,
 		},
+		log: log,
 	}
 }
 
 func (s *Server) Run() error {
-	log.Printf("Сервер запущен на %s", s.server.Addr)
+	s.log.Infof("Start server on port %s", s.server.Addr)
 	return s.server.ListenAndServe()
 }
