@@ -1,8 +1,8 @@
-package logging
+package logger
 
 import "github.com/sirupsen/logrus"
 
-func MustLog(mode string) *logrus.Logger {
+func SetupLog(mode string) *logrus.Logger {
 	log := logrus.New()
 
 	switch mode {
