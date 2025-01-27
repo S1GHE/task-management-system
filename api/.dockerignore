@@ -1,0 +1,10 @@
+.git
+.idea
+schema
+queries.yaml
+.env*
+.docker-compose*
+.gitignore
+Dockerfile
+makefile
+readme.md
