@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"log/slog"
 	"net/http"
 	"task-management-system-api/internal/applications"
 	"task-management-system-api/pkg/logger"
@@ -9,8 +10,9 @@ import (
 
 func Run(cfg *Config) error {
 	handler := applications.NewHTTPServer()
-	logger.SetupLog(cfg.Mod)
+	logger.Setup()
 
+	slog.Info("SERVER START")
 	if err := startServer(cfg.Port, handler.SetupHTTPServer()); err != nil {
 		return err
 	}
@@ -26,7 +28,6 @@ func startServer(port string, handler http.Handler) error {
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 	}
-
 	if err := server.ListenAndServe(); err != nil {
 		return err
 	}
