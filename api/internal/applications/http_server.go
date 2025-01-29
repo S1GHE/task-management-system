@@ -1,6 +1,7 @@
 package applications
 
 import (
+	"github.com/go-playground/validator/v10"
 	"net/http"
 	"task-management-system-api/internal/applications/projects"
 	"task-management-system-api/internal/applications/user"
@@ -16,8 +17,10 @@ func NewHTTPServer() *HTTPServer {
 func (s *HTTPServer) SetupHTTPServer() http.Handler {
 	mux := http.NewServeMux()
 
-	projectsHandler := projects.SetupHandler()
-	userHandler := user.SetupHandlers()
+	validate := validator.New()
+
+	projectsHandler := projects.SetupHandler(validate)
+	userHandler := user.SetupHandlers(validate)
 
 	mux.HandleFunc("GET /api/projects", projectsHandler.GetProjects)
 	mux.HandleFunc("POST /api/projects", projectsHandler.CreateProject)
