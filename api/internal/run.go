@@ -13,7 +13,7 @@ func Run(cfg *Config) error {
 	logger.Setup()
 
 	slog.Info("SERVER START")
-	if err := startServer(cfg.Port, handler.SetupHTTPServer()); err != nil {
+	if err := startServer(cfg.Server.Port, handler.SetupHTTPServer()); err != nil {
 		return err
 	}
 

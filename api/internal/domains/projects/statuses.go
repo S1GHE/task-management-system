@@ -10,7 +10,7 @@ const (
 type TaskStatus string
 
 const (
-	TasksStausLow     TaskStatus = "low"
-	TasksStausAverage TaskStatus = "average"
-	TasksStausHigh    TaskStatus = "high"
+	TasksStatusLow     TaskStatus = "low"
+	TasksStatusAverage TaskStatus = "average"
+	TasksStatusHigh    TaskStatus = "high"
 )
