@@ -3,32 +3,42 @@ package applications
 import (
 	"github.com/go-playground/validator/v10"
 	"net/http"
+	"task-management-system-api/internal/applications/middleware"
 	"task-management-system-api/internal/applications/projects"
-	"task-management-system-api/internal/applications/user"
+	"task-management-system-api/internal/applications/users"
+	userInfra "task-management-system-api/internal/infrastructure/users"
 )
 
 type HTTPServer struct {
+	userRepo *userInfra.PostgresRepo
 }
 
-func NewHTTPServer() *HTTPServer {
-	return &HTTPServer{}
+func NewHTTPServer(userRepo *userInfra.PostgresRepo) *HTTPServer {
+	return &HTTPServer{
+		userRepo: userRepo,
+	}
 }
 
 func (s *HTTPServer) SetupHTTPServer() http.Handler {
 	mux := http.NewServeMux()
-
 	validate := validator.New()
 
 	projectsHandler := projects.SetupHandler(validate)
-	userHandler := user.SetupHandlers(validate)
+	userHandler := users.SetupHandlers(validate, s.userRepo)
 
-	mux.HandleFunc("GET /api/projects", projectsHandler.GetProjects)
-	mux.HandleFunc("POST /api/projects", projectsHandler.CreateProject)
+	mux.HandleFunc("POST /register/user", userHandler.RegisterUser)
+	mux.HandleFunc("POST /login/user", userHandler.LoginUser)
 
-	mux.HandleFunc("PATCH /api/projects/{project_id}/tasks", projectsHandler.CreateProjectTask)
+	protectedMux := http.NewServeMux()
+	protectedMux.HandleFunc("GET /api/projects", projectsHandler.GetProjects)
+	protectedMux.HandleFunc("POST /api/projects", projectsHandler.CreateProject)
+	protectedMux.HandleFunc("PATCH /api/projects/{project_id}/tasks", projectsHandler.CreateProjectTask)
 
-	mux.HandleFunc("POST /api/register/user", userHandler.RegisterUser)
-	mux.HandleFunc("POST /api/login/user", userHandler.LoginUser)
+	protectedRoutes := middleware.JWTMiddleware(protectedMux)
 
-	return mux
+	finalMux := http.NewServeMux()
+	finalMux.Handle("/", mux)
+	finalMux.Handle("/api/", protectedRoutes)
+
+	return finalMux
 }

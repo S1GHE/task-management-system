@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func getJwtSecretKey() []byte {
+func GetJwtSecretKey() []byte {
 	secretKey := os.Getenv("SECRET_KEY")
 	if secretKey == "" {
 		return []byte("secret_key")
@@ -18,17 +18,17 @@ func getJwtSecretKey() []byte {
 	return []byte(secretKey)
 }
 
-func generateAccessToken(userId uuid.UUID) (string, error) {
+func GenerateAccessToken(userId uuid.UUID) (string, error) {
 	claims := jwt.RegisteredClaims{
 		Subject:   userId.String(),
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(getJwtSecretKey())
+	return token.SignedString(GetJwtSecretKey())
 }
 
-func generateRefreshToken() (string, error) {
+func GenerateRefreshToken() (string, error) {
 	randomBytes := make([]byte, 32)
 
 	if _, err := rand.Read(randomBytes); err != nil {

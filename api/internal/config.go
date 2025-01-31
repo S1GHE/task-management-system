@@ -47,7 +47,7 @@ type Postgres struct {
 func loadPostgres() *Postgres {
 	host := os.Getenv("DB_HOST")
 	if host == "" {
-		host = "db"
+		host = "localhost"
 	}
 
 	port := os.Getenv("DB_PORT")
@@ -55,19 +55,19 @@ func loadPostgres() *Postgres {
 		port = "5432"
 	}
 
-	user := os.Getenv("DB_USER")
+	user := os.Getenv("DB_USERNAME")
 	if user == "" {
-		user = "postgres"
+		user = "my_user"
 	}
 
 	password := os.Getenv("DB_PASSWORD")
 	if password == "" {
-		password = "postgres"
+		password = "my_password"
 	}
 
 	name := os.Getenv("DB_NAME")
 	if name == "" {
-		name = "postgres"
+		name = "my_database"
 	}
 
 	return &Postgres{host, port, user, password, name}
